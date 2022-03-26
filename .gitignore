@@ -28,3 +28,4 @@ coverage
 *.sw?
 
 Vue_README.md
+.env
