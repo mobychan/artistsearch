@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import SearchField from '@/components/SearchField.vue';
+import ArtistSearch from '@/components/ArtistSearch.vue';
 </script>
 
 <template>
     <main>
-        <SearchField />
+        <ArtistSearch />
     </main>
 </template>

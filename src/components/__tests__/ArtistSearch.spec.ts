@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { DOMWrapper, mount, VueWrapper } from '@vue/test-utils';
 import MockAdapter from 'axios-mock-adapter';
-import SearchField from '../SearchField.vue';
+import ArtistSearch from '../ArtistSearch.vue';
 import axios from 'axios';
 
-describe('SearchField', async () => {
-    let wrapper: VueWrapper<InstanceType<typeof SearchField>>;
+describe('ArtistSearch', async () => {
+    let wrapper: VueWrapper<InstanceType<typeof ArtistSearch>>;
     beforeEach(() => {
-        wrapper = mount(SearchField);
+        wrapper = mount(ArtistSearch);
     });
 
     describe('Input', async () => {
@@ -37,7 +37,6 @@ describe('SearchField', async () => {
         const searchTerm = 'Test Term';
 
         beforeEach(() => {
-            // wrapper = mount(SearchField);
             searchInput = wrapper.get('#searchTerm');
             deleteButton = wrapper.get('#clearInput');
         });
@@ -80,11 +79,9 @@ describe('SearchField', async () => {
     });
 
     describe('Lookup Button', async () => {
-        let mock: MockAdapter;
         let lookupButton: Omit<DOMWrapper<HTMLButtonElement>, "exists">;
 
         beforeEach(function () {
-            mock = new MockAdapter(axios);
             lookupButton = wrapper.get('#lookupButton');
         });
 
@@ -177,5 +174,19 @@ describe('SearchField', async () => {
 
     it('getRandomArtist does not return an empty string', () => {
         expect(wrapper.vm.getRandomArtist()).not.toBe('');
+    });
+
+    it('startLoading sets data.loading to true', async () => {
+        wrapper.vm.startLoading();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.loading).toBe(true);
+    });
+
+    it('stopLoading sets data.loading to false', async () => {
+        wrapper.vm.stopLoading();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.loading).toBe(false);
     });
 });

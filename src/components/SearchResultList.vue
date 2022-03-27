@@ -1,10 +1,16 @@
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { ApiResult } from '../dataClasses';
+import type { ApiResult, Image } from '../dataClasses';
 
 export default defineComponent({
     props: {
         searchResult: Object as () => ApiResult | null
+    },
+    methods: {
+        getImage(artistImages: Image[]): string {
+            const image = artistImages.find(i => i.size == 'small');
+            return image == null ? '' : image['#text'];
+        }
     }
 });
 </script>
@@ -25,7 +31,7 @@ export default defineComponent({
                     <a target="_blank" :href="artist.url">{{ artist.url }}</a>
                 </div>
                 <div class="cell">
-                    <img :src="(artist.image[0]['#text'] as string)" height="50" />
+                    <img :src="getImage(artist.image)" height="50" />
                 </div>
             </template>
         </div>

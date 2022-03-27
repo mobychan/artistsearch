@@ -13,12 +13,15 @@ import HomeView from './views/HomeView.vue';
 
 <style>
 @import "@/assets/base.css";
+body {
+    display: flex;
+    place-items: flex-start;
+}
 
 #app {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 2rem;
-
+    padding: 0 2rem;
     font-weight: normal;
 }
 
@@ -28,12 +31,16 @@ header {
     color: var(--vt-c-text-logo);
     font-size: 60px;
     font-weight: 500;
+    margin: auto;
+    width: 600px;
     margin-bottom: 20px;
+    display: flex;
+    place-items: center;
 }
 
 .logo {
     display: block;
-    margin: 0 auto 2rem;
+    margin: 0 2rem 0 0;
 }
 
 a,
@@ -43,29 +50,7 @@ a,
     transition: 0.4s;
 }
 
-@media (hover: hover) {
-    a:hover {
-        background-color: hsla(160, 100%, 37%, 0.2);
-    }
-}
-
-@media (min-width: 1024px) {
-    body {
-        display: flex;
-        place-items: flex-start;
-    }
-
-    #app {
-        padding: 0 2rem;
-    }
-
-    header {
-        display: flex;
-        place-items: center;
-    }
-
-    .logo {
-        margin: 0 2rem 0 0;
-    }
+a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
 }
 </style>

@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue';
 import MessageDisplay from '@/components/MessageDisplay.vue';
 import SearchResultList from '@/components/SearchResultList.vue';
+import SaveCsv from '@/components/SaveCsv.vue';
 import type { ApiResult } from '../dataClasses';
 import axios from 'axios';
 import LoadingIndicator from './LoadingIndicator.vue';
@@ -11,6 +12,7 @@ export default defineComponent({
     components: {
         MessageDisplay: MessageDisplay,
         SearchResultList: SearchResultList,
+        SaveCsv: SaveCsv,
         LoadingIndicator: LoadingIndicator
     },
     data() {
@@ -48,15 +50,15 @@ export default defineComponent({
                     if (result.data.error) {
                         this.error = true;
                         this.message = `${result.data.error}: ${result.data.message}`;
+                        this.loading = false;
                         return;
                     } else if (Object.keys(result.data).length == 0) {
                         this.message = 'No results could be found. Try again or check out these artists:';
                         this.callApi(this.getApiUrl(this.getRandomArtist()));
                     } else {
                         this.searchResult = result.data;
+                        this.loading = false;
                     }
-
-                    this.loading = false;
                 });
         },
         getApiUrl(searchTerm: string) {
@@ -73,6 +75,12 @@ export default defineComponent({
             if (this.maxResults <= 0) {
                 this.maxResults = 1;
             }
+        },
+        startLoading() {
+            this.loading = true;
+        },
+        stopLoading() {
+            this.loading = false;
         }
     }
 });
@@ -80,33 +88,52 @@ export default defineComponent({
 
 <template>
     <LoadingIndicator :loading="loading" />
-    <div class="container">
-        <label for="searchTerm">Artist</label>
-        <br />
-        <input id="searchTerm" type="text" v-model="searchTerm" placeholder="Enter artist..." />
-        <button id="clearInput" @click="clearInput">X</button>
+    <div class="searchForm">
+        <div class="container">
+            <label for="searchTerm">Artist</label>
+            <br />
+            <input id="searchTerm" type="text" v-model="searchTerm" placeholder="Enter artist..." />
+            <button id="clearInput" @click="clearInput">X</button>
+        </div>
+        <div class="container">
+            <label for="searchTerm">Maximum number of results</label>
+            <br />
+            <input
+                id="maxResults"
+                type="number"
+                min="1"
+                v-model="maxResults"
+                @change="checkMaxResultsValue"
+            />
+        </div>
+        <div class="container">
+            <button id="lookupButton" @click="lookup">Look up artist</button>
+        </div>
     </div>
-    <div class="container">
-        <label for="searchTerm">Maximum number of results</label>
-        <br />
-        <input
-            id="maxResults"
-            type="number"
-            min="1"
-            v-model="maxResults"
-            @change="checkMaxResultsValue"
+    <div class="horizontal container">
+        <MessageDisplay :error="error" :message="message" />
+        <SaveCsv
+            :searchResult="searchResult"
+            @startLoading="startLoading"
+            @stopLoading="stopLoading"
         />
     </div>
-    <div class="container">
-        <button id="lookupButton" @click="lookup">Look up artist</button>
-    </div>
-    <MessageDisplay :error="error" :message="message" />
     <SearchResultList :searchResult="searchResult" />
 </template>
 
 <style scoped>
 .container {
     margin-top: 10px;
+}
+
+.horizontal {
+    display: flex;
+    justify-content: space-between;
+}
+
+.searchForm {
+    width: 600px;
+    margin: auto;
 }
 
 #clearInput {
