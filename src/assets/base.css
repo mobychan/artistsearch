@@ -24,6 +24,9 @@
 
 /* semantic color variables for this project */
 :root {
+  --vt-c-text-logo: rgba(213, 16, 7, 1);
+  --vt-c-green: hsla(160, 100%, 37%, 1);
+
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
@@ -48,16 +51,9 @@
 
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
-  }
-}
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  position: relative;
-  font-weight: normal;
+    --color-text-error: var(--vt-c-text-red);
+  }
 }
 
 body {

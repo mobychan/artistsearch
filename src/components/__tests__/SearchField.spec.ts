@@ -14,7 +14,7 @@ describe('SearchField', async () => {
         let searchInput: Omit<DOMWrapper<HTMLInputElement>, "exists">;
         const searchTerm = 'Test Term';
         beforeEach(() => {
-            searchInput = wrapper.get('input[type="text"]');
+            searchInput = wrapper.get('#searchTerm');
         });
 
         it('sets data.searchTerm properly', async () => {
@@ -37,12 +37,12 @@ describe('SearchField', async () => {
         const searchTerm = 'Test Term';
 
         beforeEach(() => {
-            wrapper = mount(SearchField);
-            searchInput = wrapper.get('input[type="text"]');
+            // wrapper = mount(SearchField);
+            searchInput = wrapper.get('#searchTerm');
             deleteButton = wrapper.get('#clearInput');
         });
 
-        it('clears data.searchTerm on delete button press', async () => {
+        it('clears data.searchTerm', async () => {
             wrapper.vm.searchTerm = searchTerm;
             await wrapper.vm.$nextTick();
             await deleteButton.trigger('click');
@@ -50,28 +50,42 @@ describe('SearchField', async () => {
             expect(wrapper.vm.searchTerm).toBe('');
         });
 
-        it('clears input content on delete button press', async () => {
+        it('clears input content', async () => {
             await searchInput.setValue(searchTerm);
             await deleteButton.trigger('click');
 
             expect(searchInput.element.value).toBe('');
         });
+
+        it('clears data.searchResult', async () => {
+            wrapper.vm.searchResult = { results: { artistmatches: { artist: [] } } };
+            await deleteButton.trigger('click');
+
+            expect(wrapper.vm.searchResult).toBe(null);
+        });
+
+        it('clears data.error', async () => {
+            wrapper.vm.error = true;
+            await deleteButton.trigger('click');
+
+            expect(wrapper.vm.error).toBe(false);
+        });
+
+        it('clears data.message', async () => {
+            wrapper.vm.message = 'message';
+            await deleteButton.trigger('click');
+
+            expect(wrapper.vm.message).toBe('');
+        });
     });
 
     describe('Lookup Button', async () => {
-        let parameter = import.meta.env.VITE_API_ARTIST_SEARCH as string;
-        parameter = parameter?.replace('{apiKey}', import.meta.env.VITE_API_KEY as string);
-        const parameterEmpty = parameter?.replace('{artist}', '');
-        const parameterValue = parameter?.replace('{artist}', 'cher');
-        const urlEmpty = `${import.meta.env.VITE_API_URL}${parameterEmpty}`;
-        const urlValue = `${import.meta.env.VITE_API_URL}${parameterValue}`;
-
         let mock: MockAdapter;
         let lookupButton: Omit<DOMWrapper<HTMLButtonElement>, "exists">;
 
         beforeEach(function () {
             mock = new MockAdapter(axios);
-            lookupButton = wrapper.get('#lookup');
+            lookupButton = wrapper.get('#lookupButton');
         });
 
         it('clicking calls lookup on mount', async () => {
@@ -85,33 +99,27 @@ describe('SearchField', async () => {
     });
 
     describe('Lookup', async () => {
-        let parameter = import.meta.env.VITE_API_ARTIST_SEARCH as string;
-        parameter = parameter?.replace('{apiKey}', import.meta.env.VITE_API_KEY as string);
-        const parameterEmpty = parameter?.replace('{artist}', '');
-        const parameterValue = parameter?.replace('{artist}', 'cher');
-        const urlEmpty = `${import.meta.env.VITE_API_URL}${parameterEmpty}`;
-        const urlValue = `${import.meta.env.VITE_API_URL}${parameterValue}`;
-
         let mock: MockAdapter;
         let lookupButton: Omit<DOMWrapper<HTMLButtonElement>, "exists">;
 
         beforeEach(function () {
-            mock = new MockAdapter(axios);
-            lookupButton = wrapper.get('#lookup');
+            lookupButton = wrapper.get('#lookupButton');
         });
 
         it('sets data.message if data object is empty', async () => {
-            mock.onGet(urlEmpty).reply(200, {});
+            mock = new MockAdapter(axios);
+            mock.onAny().reply(200, {});
 
             await lookupButton.trigger('click');
 
-            expect(wrapper.vm.message).toBe('No results could be found. Try again or check out these random artists:');
+            expect(wrapper.vm.message).toBe('No results could be found. Try again or check out these artists:');
         });
 
         it('sets data.message and data.error if api returns error', async () => {
             const errorCode = 2;
             const errorMessage = 'error';
-            mock.onGet(urlEmpty).reply(200, { message: errorMessage, error: errorCode });
+            mock = new MockAdapter(axios);
+            mock.onAny().reply(200, { message: errorMessage, error: errorCode });
 
             await lookupButton.trigger('click');
 
@@ -138,11 +146,36 @@ describe('SearchField', async () => {
                     }
                 }
             };
-            mock.onGet(urlEmpty).reply(200, data);
+            mock = new MockAdapter(axios);
+            mock.onAny().reply(200, data);
 
             await lookupButton.trigger('click');
 
             expect(JSON.stringify(wrapper.vm.searchResult)).toBe(JSON.stringify(data));
         });
+    });
+
+    describe('max results input', async () => {
+        let maxResultsInput: Omit<DOMWrapper<HTMLInputElement>, "exists">;
+        beforeEach(() => {
+            maxResultsInput = wrapper.get('#maxResults');
+        });
+
+        it('sets data.maxResults on input', async () => {
+            const maxResultsValue = 1;
+            await maxResultsInput.setValue(maxResultsValue);
+
+            expect(wrapper.vm.maxResults).toBe(maxResultsValue);
+        });
+
+        it('inputting negative values sets control to 1', async () => {
+            await maxResultsInput.setValue(-1);
+
+            expect(maxResultsInput.element.value).toBe((1).toString());
+        });
+    });
+
+    it('getRandomArtist does not return an empty string', () => {
+        expect(wrapper.vm.getRandomArtist()).not.toBe('');
     });
 });

@@ -25,7 +25,7 @@ import HomeView from './views/HomeView.vue';
 header {
     line-height: 1.5;
     max-height: 100vh;
-    color: #d51007;
+    color: var(--vt-c-text-logo);
     font-size: 60px;
     font-weight: 500;
     margin-bottom: 20px;
@@ -39,7 +39,7 @@ header {
 a,
 .green {
     text-decoration: none;
-    color: hsla(160, 100%, 37%, 1);
+    color: var(--vt-c-green);
     transition: 0.4s;
 }
 
