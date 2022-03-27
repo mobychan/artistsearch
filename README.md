@@ -42,7 +42,7 @@ $ serve -s dist
 
 The application will be available on http://localhost:3000
 
-# Installation - Express Backend
+# Installation - Express Backend (./server)
 ## .env File - Setting the API Key
 Rename the '.env.default' file to '.env' and set the VITE_API_KEY value to the API Key you receive from [last.fm](https://www.last.fm/api/authentication).
 
