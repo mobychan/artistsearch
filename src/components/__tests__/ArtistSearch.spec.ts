@@ -103,24 +103,14 @@ describe('ArtistSearch', async () => {
             lookupButton = wrapper.get('#lookupButton');
         });
 
-        it('sets data.message if data object is empty', async () => {
-            mock = new MockAdapter(axios);
-            mock.onAny().reply(200, {});
-
-            await lookupButton.trigger('click');
-
-            expect(wrapper.vm.message).toBe('No results could be found. Try again or check out these artists:');
-        });
-
         it('sets data.message and data.error if api returns error', async () => {
-            const errorCode = 2;
             const errorMessage = 'error';
             mock = new MockAdapter(axios);
-            mock.onAny().reply(200, { message: errorMessage, error: errorCode });
+            mock.onAny().reply(200, { message: errorMessage, error: true });
 
             await lookupButton.trigger('click');
 
-            expect(wrapper.vm.message).toBe(`${errorCode}: ${errorMessage}`);
+            expect(wrapper.vm.message).toBe(errorMessage);
             expect(wrapper.vm.error).toBe(true);
         });
 
@@ -144,7 +134,7 @@ describe('ArtistSearch', async () => {
                 }
             };
             mock = new MockAdapter(axios);
-            mock.onAny().reply(200, data);
+            mock.onAny().reply(200, { data });
 
             await lookupButton.trigger('click');
 

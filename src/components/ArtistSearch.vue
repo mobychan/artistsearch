@@ -47,25 +47,16 @@ export default defineComponent({
         callApi(apiUrl: string) {
             axios.get(apiUrl)
                 .then(result => {
-                    if (result.data.error) {
-                        this.error = true;
-                        this.message = `${result.data.error}: ${result.data.message}`;
-                        this.loading = false;
-                        return;
-                    } else if (Object.keys(result.data).length == 0) {
-                        this.message = 'No results could be found. Try again or check out these artists:';
-                        this.callApi(this.getApiUrl(this.getRandomArtist()));
-                    } else {
-                        this.searchResult = result.data;
-                        this.loading = false;
-                    }
+                    this.error = result.data.error;
+                    this.message = result.data.message;
+                    this.loading = false;
+                    this.searchResult = result.data.data;
                 });
         },
         getApiUrl(searchTerm: string) {
             let parameter = import.meta.env.VITE_API_ARTIST_SEARCH as string;
             parameter = parameter?.replace('{maxResults}', this.maxResults.toString());
             parameter = parameter?.replace('{artist}', searchTerm);
-            parameter = parameter?.replace('{apiKey}', import.meta.env.VITE_API_KEY as string);
             return `${import.meta.env.VITE_API_URL}${parameter}`;
         },
         getRandomArtist() {
